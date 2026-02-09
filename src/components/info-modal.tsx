@@ -143,7 +143,11 @@ function LimitationsContent() {
         </p>
 
         <p>
-          <span className="text-foreground font-medium">This predicts reference errors, not general accuracy.</span> Citation generation is a particularly demanding task — it requires exact titles, authors, years, and DOIs. General question-answering or summarisation may be more reliable even in low-resource domains.
+          <span className="text-foreground font-medium">This predicts detailed retrieval errors, not general accuracy.</span> LLMs don&apos;t necessarily err on general knowledge — even small models can summarise and reason competently. But when you ask for specific, detailed information (exact paper titles, real authors, correct DOIs), you&apos;re asking the model to resolve fine-grained distinctions in its representation space. That&apos;s where these error rates apply. General question-answering or summarisation may be more reliable even in low-resource domains.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">More model families need testing.</span> Confirming the relationship across large and small models from different providers (Claude, Gemini, Llama) and at different parameter sizes would strengthen the predictive framework considerably.
         </p>
 
         <p className="text-muted-foreground/60 text-xs">
