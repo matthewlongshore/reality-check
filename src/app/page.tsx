@@ -311,7 +311,7 @@ export default function Home() {
               <div className="flex w-full flex-col gap-4 lg:flex-row">
                 <ResultCard
                   modelLabel="Flagship Model"
-                  modelDescription="e.g. GPT-4o, Claude Opus"
+                  modelDescription="e.g. GPT-5, Claude Opus, Gemini Pro"
                   hallucinationRate={Math.round(result.flagship.rate * 100)}
                   margin={Math.round(result.flagship.margin * 100)}
                   categories={result.flagship.categories}
@@ -321,7 +321,7 @@ export default function Home() {
                 />
                 <ResultCard
                   modelLabel="Small Model"
-                  modelDescription="e.g. GPT-4o-mini, Haiku"
+                  modelDescription="e.g. GPT-5-nano, Haiku, Llama 3 8B"
                   hallucinationRate={Math.round(result.small.rate * 100)}
                   margin={Math.round(result.small.margin * 100)}
                   categories={result.small.categories}
