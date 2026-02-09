@@ -3,9 +3,112 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 
+type ModalContent = "methodology" | "predictability"
+
 interface InfoModalProps {
-  open: boolean
+  open: ModalContent | null
   onClose: () => void
+}
+
+function MethodologyContent() {
+  return (
+    <>
+      <h2 className="mb-4 text-lg font-semibold text-foreground">
+        What does this mean?
+      </h2>
+      <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          Every prediction is based on a regression model calibrated on 1,435 LLM-generated academic references that were verified using{" "}
+          <a
+            href="https://sourceverify.ai/en/svris"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground underline underline-offset-2"
+          >
+            SVRIS
+          </a>{" "}
+          (SourceVerify Reference Integrity Score).
+        </p>
+
+        <p>Each reference was classified into one of four categories:</p>
+
+        <div className="space-y-2 pl-1">
+          <div className="flex items-start gap-2">
+            <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+            <span><span className="text-foreground font-medium">Verified</span> — Reference confirmed as real with correct metadata.</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-yellow-500" />
+            <span><span className="text-foreground font-medium">Verified with error</span> — Real paper found, but with metadata errors (wrong year, misspelled author, etc.).</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-orange-500" />
+            <span><span className="text-foreground font-medium">Needs review</span> — Cannot be automatically confirmed or denied; ambiguous match.</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-red-500" />
+            <span><span className="text-foreground font-medium">Unverified</span> — No matching real publication found; likely fabricated.</span>
+          </div>
+        </div>
+
+        <p>
+          The <span className="text-foreground font-medium">predicted error rate</span> is the proportion of references expected to fall into the <span className="text-foreground">Needs review</span> + <span className="text-foreground">Unverified</span> categories — references that could not be confirmed as real.
+        </p>
+      </div>
+    </>
+  )
+}
+
+function PredictabilityContent() {
+  return (
+    <>
+      <h2 className="mb-4 text-lg font-semibold text-foreground">
+        Is this really predictable?
+      </h2>
+      <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          Yes. LLMs don&apos;t store facts as discrete records. They encode knowledge as overlapping activation patterns across a shared parameter space — a phenomenon called{" "}
+          <a
+            href="https://arxiv.org/abs/2501.04693"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground underline underline-offset-2"
+          >
+            superposition
+          </a>
+          . Every concept shares dimensions with other concepts. This is how a model can &quot;know&quot; far more things than it has parameters.
+        </p>
+
+        <p>
+          The trade-off is noise. When a topic is well-represented in training data, its activation pattern is strong and distinct — the signal dominates. When a topic is rare, its pattern is weaker and overlaps more with neighbouring concepts. The model still activates confidently, but the signal is noisy, and errors creep in progressively: first wrong metadata, then ambiguous matches, then outright fabrications.
+        </p>
+
+        <p>
+          This makes error rates predictable from three factors:
+        </p>
+
+        <div className="space-y-2 pl-1">
+          <p>
+            <span className="text-foreground font-medium">Model size</span> — More parameters means more dimensions, so less overlap between concepts. Interference scales as 1/m. This is the strongest predictor (~22% of variance).
+          </p>
+          <p>
+            <span className="text-foreground font-medium">Topic volume</span> — More literature sharpens the internal representation. Each 10x increase in papers reduces errors by ~12 pp. The first 1,000 papers matter enormously; going from 100K to 1M barely moves the needle.
+          </p>
+          <p>
+            <span className="text-foreground font-medium">Country volume</span> — A country&apos;s scholarly footprint determines how well the model can constrain geographic context. Each 10x increase reduces errors by ~12 pp.
+          </p>
+        </div>
+
+        <p>
+          Together these explain 30% of variance (R&sup2; = 0.302, all p &lt; 0.001). The remaining 70% is topic-level noise. But the systematic component is robust and monotonic — which is why we can predict it.
+        </p>
+
+        <p className="text-muted-foreground/60 text-xs">
+          Based on 1,435 verified references across 24 topics, 3 countries, and 2 model sizes.
+        </p>
+      </div>
+    </>
+  )
 }
 
 export function InfoModal({ open, onClose }: InfoModalProps) {
@@ -34,55 +137,8 @@ export function InfoModal({ open, onClose }: InfoModalProps) {
               <X className="h-4 w-4" />
             </button>
 
-            <h2 className="mb-4 text-lg font-semibold text-foreground">
-              What does this mean?
-            </h2>
-
-            <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
-              <p>
-                Every prediction is based on a regression model calibrated on 1,435 LLM-generated academic references that were verified using{" "}
-                <a
-                  href="https://sourceverify.ai/en/svris"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-foreground underline underline-offset-2"
-                >
-                  SVRIS
-                </a>{" "}
-                (SourceVerify Reference Integrity Score).
-              </p>
-
-              <p>
-                Each reference was classified into one of four categories:
-              </p>
-
-              <div className="space-y-2 pl-1">
-                <div className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                  <span><span className="text-foreground font-medium">Verified</span> — Reference confirmed as real with correct metadata.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-yellow-500" />
-                  <span><span className="text-foreground font-medium">Verified with error</span> — Real paper found, but with metadata errors (wrong year, misspelled author, etc.).</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-orange-500" />
-                  <span><span className="text-foreground font-medium">Needs review</span> — Cannot be automatically confirmed or denied; ambiguous match.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="mt-1.5 inline-block h-2 w-2 shrink-0 rounded-full bg-red-500" />
-                  <span><span className="text-foreground font-medium">Unverified</span> — No matching real publication found; likely fabricated.</span>
-                </div>
-              </div>
-
-              <p>
-                The <span className="text-foreground font-medium">predicted error rate</span> is the proportion of references expected to fall into the <span className="text-foreground">Needs review</span> + <span className="text-foreground">Unverified</span> categories — references that could not be confirmed as real.
-              </p>
-
-              <p>
-                Predictions are driven by three factors: the volume of academic literature on the topic (from OpenAlex), the country&apos;s total scholarly output, and model size. Together these explain 30% of the variance (R&sup2; = 0.302).
-              </p>
-            </div>
+            {open === "methodology" && <MethodologyContent />}
+            {open === "predictability" && <PredictabilityContent />}
           </motion.div>
         </>
       )}

@@ -140,7 +140,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PredictionResult | null>(null)
   const [error, setError] = useState("")
-  const [infoOpen, setInfoOpen] = useState(false)
+  const [modalOpen, setModalOpen] = useState<"methodology" | "predictability" | null>(null)
 
   const runPrediction = useCallback((topicCount: number, countryTotal: number) => {
     setResult({
@@ -188,7 +188,7 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      <InfoModal open={infoOpen} onClose={() => setInfoOpen(false)} />
+      <InfoModal open={modalOpen} onClose={() => setModalOpen(null)} />
 
       {/* Subtle noise/grain overlay */}
       <div
@@ -213,15 +213,24 @@ export default function Home() {
             Reality Check
           </h1>
           <p className="text-muted-foreground">
-            Predict AI hallucination rates for any research topic and country.{" "}
+            Predict AI hallucination rates for any research topic and country.
+          </p>
+          <div className="mt-2 flex items-center justify-center gap-4">
             <button
-              onClick={() => setInfoOpen(true)}
-              className="inline-flex cursor-pointer items-center gap-1 text-muted-foreground/60 transition-colors hover:text-foreground"
+              onClick={() => setModalOpen("methodology")}
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
             >
-              <Info className="inline h-3.5 w-3.5" />
+              <Info className="h-3 w-3" />
               <span className="underline underline-offset-2">What does this mean?</span>
             </button>
-          </p>
+            <button
+              onClick={() => setModalOpen("predictability")}
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+            >
+              <Info className="h-3 w-3" />
+              <span className="underline underline-offset-2">Is this really predictable?</span>
+            </button>
+          </div>
         </motion.div>
 
         {/* Input Form */}
