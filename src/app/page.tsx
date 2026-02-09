@@ -140,7 +140,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PredictionResult | null>(null)
   const [error, setError] = useState("")
-  const [modalOpen, setModalOpen] = useState<"methodology" | "predictability" | null>(null)
+  const [modalOpen, setModalOpen] = useState<"methodology" | "predictability" | "limitations" | null>(null)
 
   const runPrediction = useCallback((topicCount: number, countryTotal: number) => {
     setResult({
@@ -229,6 +229,13 @@ export default function Home() {
             >
               <Info className="h-3 w-3" />
               <span className="underline underline-offset-2">Is this really predictable?</span>
+            </button>
+            <button
+              onClick={() => setModalOpen("limitations")}
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+            >
+              <Info className="h-3 w-3" />
+              <span className="underline underline-offset-2">Is this always correct?</span>
             </button>
           </div>
         </motion.div>

@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 
-type ModalContent = "methodology" | "predictability"
+type ModalContent = "methodology" | "predictability" | "limitations"
 
 interface InfoModalProps {
   open: ModalContent | null
@@ -84,12 +84,12 @@ function PredictabilityContent() {
         </p>
 
         <p>
-          This makes error rates predictable from three factors:
+          It turns out that superposition and error rates follow a law — interference between overlapping concepts scales as 1/m, where m is the number of dimensions available. This means the level of errors one can expect is predictable. If we know the model size and have an idea of the relative representation of a topic in the training set, we can predict research errors — specifically the reliability of detailed retrieval tasks like generating citations — based on three factors:
         </p>
 
         <div className="space-y-2 pl-1">
           <p>
-            <span className="text-foreground font-medium">Model size</span> — More parameters means more dimensions, so less overlap between concepts. Interference scales as 1/m. This is the strongest predictor (~22% of variance).
+            <span className="text-foreground font-medium">Model size</span> — More parameters means more dimensions, so less overlap between concepts. This is the strongest predictor (~22% of variance).
           </p>
           <p>
             <span className="text-foreground font-medium">Topic volume</span> — More literature sharpens the internal representation. Each 10x increase in papers reduces errors by ~12 pp. The first 1,000 papers matter enormously; going from 100K to 1M barely moves the needle.
@@ -105,6 +105,49 @@ function PredictabilityContent() {
 
         <p className="text-muted-foreground/60 text-xs">
           Based on 1,435 verified references across 24 topics, 3 countries, and 2 model sizes.
+        </p>
+      </div>
+    </>
+  )
+}
+
+function LimitationsContent() {
+  return (
+    <>
+      <h2 className="mb-4 text-lg font-semibold text-foreground">
+        Is this always correct?
+      </h2>
+      <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+        <p>
+          No. This is a statistical estimate, not a guarantee. The model captures the <span className="text-foreground font-medium">systematic</span> pattern — the part of hallucination rates that is predictable from topic volume, country, and model size. Several important caveats apply:
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">70% of variance is unexplained.</span> Individual topics can be significantly better or worse than predicted. A niche topic that happens to have strong representation in a specific model&apos;s training data may perform much better than expected. Conversely, a seemingly broad topic with poor training coverage may perform worse.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">The model was trained on one model family.</span> Both models tested (GPT-5 and GPT-5-nano) are from OpenAI. Other model families — Claude, Gemini, Llama — may show different absolute rates, though the directional patterns (more data = fewer errors, bigger model = fewer errors) are likely to hold.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">Only English-speaking countries were tested.</span> The three study countries (US, Nigeria, Ghana) are all primarily Anglophone. Non-English contexts may show additional language-related effects.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">OpenAlex is a proxy, not ground truth.</span> We use OpenAlex work counts as a proxy for how well a topic is represented in model training data. The actual training data composition is unknown and may differ.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">Small model predictions hit a ceiling.</span> When the flagship rate is already high, adding the small-model penalty pushes predictions toward 100%. Above ~90%, treat predictions as &quot;extremely high risk&quot; rather than precise estimates.
+        </p>
+
+        <p>
+          <span className="text-foreground font-medium">This predicts reference errors, not general accuracy.</span> Citation generation is a particularly demanding task — it requires exact titles, authors, years, and DOIs. General question-answering or summarisation may be more reliable even in low-resource domains.
+        </p>
+
+        <p className="text-muted-foreground/60 text-xs">
+          The ± value shown with each prediction is the 95% confidence interval on the mean estimate.
         </p>
       </div>
     </>
@@ -139,6 +182,7 @@ export function InfoModal({ open, onClose }: InfoModalProps) {
 
             {open === "methodology" && <MethodologyContent />}
             {open === "predictability" && <PredictabilityContent />}
+            {open === "limitations" && <LimitationsContent />}
           </motion.div>
         </>
       )}
