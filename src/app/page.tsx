@@ -213,7 +213,7 @@ export default function Home() {
             Research Reality Check
           </h1>
           <p className="text-muted-foreground">
-            Predict AI hallucination rates for any research topic and country.
+            Predict AI academic reference hallucination (error) rates for any research topic and country.
           </p>
           <div className="mt-2 flex items-center justify-center gap-4">
             <button

@@ -67,7 +67,11 @@ function PredictabilityContent() {
       </h2>
       <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
         <p>
-          Yes. LLMs don&apos;t store facts as discrete records. They encode knowledge as overlapping activation patterns across a shared parameter space — a phenomenon called{" "}
+          It seems so!
+        </p>
+
+        <p>
+          LLMs don&apos;t store facts as discrete records. They encode knowledge as overlapping activation patterns across a shared parameter space — a phenomenon called{" "}
           <a
             href="https://arxiv.org/abs/2501.04693"
             target="_blank"
