@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Reality Check — AI Research Reliability Predictor",
+  title: "Research Reality Check — AI Research Reliability Predictor",
   description:
     "Predict how likely an LLM is to hallucinate academic references for any research topic and country, based on empirical data from 1,435 verified citations.",
 };

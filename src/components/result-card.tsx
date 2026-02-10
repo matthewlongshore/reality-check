@@ -70,9 +70,9 @@ function getRiskBorder(level: RiskLevel): string {
 
 const CAT_COLORS = {
   verified: "bg-emerald-500",
-  verifiedWithError: "bg-yellow-500",
-  needsReview: "bg-orange-500",
-  unverified: "bg-red-500",
+  verifiedWithError: "bg-zinc-500",
+  needsReview: "bg-amber-500",
+  unverified: "bg-rose-500",
 }
 
 export function ResultCard({

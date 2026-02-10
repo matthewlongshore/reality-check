@@ -210,7 +210,7 @@ export default function Home() {
           className="mb-12 text-center"
         >
           <h1 className="mb-3 text-balance text-4xl font-bold tracking-tight text-foreground lg:text-5xl">
-            Reality Check
+            Research Reality Check
           </h1>
           <p className="text-muted-foreground">
             Predict AI hallucination rates for any research topic and country.
