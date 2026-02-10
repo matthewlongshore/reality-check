@@ -218,21 +218,21 @@ export default function Home() {
           <div className="mt-2 flex items-center justify-center gap-4">
             <button
               onClick={() => setModalOpen("methodology")}
-              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-emerald-400/60 transition-colors hover:text-emerald-300"
             >
               <Info className="h-3 w-3" />
               <span className="underline underline-offset-2">What does this mean?</span>
             </button>
             <button
               onClick={() => setModalOpen("predictability")}
-              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-blue-400/60 transition-colors hover:text-blue-300"
             >
               <Info className="h-3 w-3" />
               <span className="underline underline-offset-2">Is this really predictable?</span>
             </button>
             <button
               onClick={() => setModalOpen("limitations")}
-              className="inline-flex cursor-pointer items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+              className="inline-flex cursor-pointer items-center gap-1 text-xs text-amber-400/60 transition-colors hover:text-amber-300"
             >
               <Info className="h-3 w-3" />
               <span className="underline underline-offset-2">Is this always correct?</span>
@@ -361,6 +361,28 @@ export default function Home() {
             Try an example
           </p>
           <ExamplePills onSelect={handleExampleSelect} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="mt-10 text-center"
+        >
+          <p className="text-xs text-muted-foreground/40">
+            Have references to check, but don&apos;t have a lot of time?{" "}
+            <a
+              href="https://sourceverify.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground/60 underline underline-offset-2 transition-colors hover:text-foreground"
+            >
+              SourceVerify.ai
+            </a>
+          </p>
+          <p className="mt-1 text-[10px] italic text-muted-foreground/30">
+            Trust Every Reference
+          </p>
         </motion.div>
       </main>
 
