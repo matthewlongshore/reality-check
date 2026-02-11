@@ -714,19 +714,17 @@ export default function LeaderboardPage() {
                 >
                   {/* Rank */}
                   <td className="py-3 pl-4 pr-2 text-center">
-                    <span
-                      className={`font-mono text-sm font-bold ${
-                        i === 0
-                          ? "text-amber-400"
-                          : i === 1
-                          ? "text-zinc-300"
-                          : i === 2
-                          ? "text-orange-400"
-                          : "text-muted-foreground/40"
-                      }`}
-                    >
-                      {i + 1}
-                    </span>
+                    {i === 0 ? (
+                      <span title="1st place">🥇</span>
+                    ) : i === 1 ? (
+                      <span title="2nd place">🥈</span>
+                    ) : i === 2 ? (
+                      <span title="3rd place">🥉</span>
+                    ) : (
+                      <span className="font-mono text-sm text-muted-foreground/40">
+                        {i + 1}
+                      </span>
+                    )}
                   </td>
 
                   {/* Model name + tags + date */}
