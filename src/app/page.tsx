@@ -207,7 +207,7 @@ export default function Home() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative z-10 flex items-center justify-end px-6 pt-4"
+        className="relative z-10 flex items-center justify-center px-6 pt-4"
       >
         <Link
           href="/leaderboard"
@@ -417,14 +417,13 @@ export default function Home() {
             verified citations &middot; R&sup2; = 0.302
           </p>
           <div className="flex items-center gap-4">
-            <a
-              href="https://openalex.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
+            <Link
+              href="/leaderboard"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
             >
-              Powered by OpenAlex
-            </a>
+              <Trophy className="h-3 w-3" />
+              ScholarReferenceBench
+            </Link>
             <span className="text-muted-foreground/20">|</span>
             <a
               href="https://sourceverify.ai"

@@ -27,7 +27,7 @@ function MethodologyContent() {
           >
             SVRIS
           </a>{" "}
-          (SourceVerify Reference Integrity Score).
+          (SourceVerify Reference Identity Standard).
         </p>
 
         <p>Each reference was classified into one of four categories:</p>

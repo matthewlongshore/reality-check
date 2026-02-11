@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Trophy, Brain, Layers, Search, Globe, Info, X, FlaskConical } from "lucide-react"
+import { Trophy, Brain, Layers, Search, Globe, Info, X, FlaskConical, MapPin, ArrowUpDown } from "lucide-react"
 import Link from "next/link"
 
 // ── Model data (from verified experiments) ──────────────────────────
@@ -16,6 +16,7 @@ interface ModelScore {
 interface ModelEntry {
   name: string
   params: string
+  activeParams?: string
   provider: string
   date: string
   scores: ModelScore
@@ -90,7 +91,8 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "GPT-OSS 120B",
-    params: "120B / 5.1B active",
+    params: "120B",
+    activeParams: "5.1B",
     provider: "Groq",
     date: "Feb 2025",
     scores: { us: 0.083, nigeria: null, ghana: null },
@@ -100,7 +102,8 @@ const MODELS: ModelEntry[] = [
   // Pending verification
   {
     name: "DeepSeek R1",
-    params: "671B / 37B active",
+    params: "671B",
+    activeParams: "37B",
     provider: "DeepSeek",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -110,7 +113,8 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "ERNIE 4.5",
-    params: "300B / 47B active",
+    params: "300B",
+    activeParams: "47B",
     provider: "Baidu",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -120,7 +124,8 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "Kimi K2",
-    params: "1T / 32B active",
+    params: "1T",
+    activeParams: "32B",
     provider: "Moonshot",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -145,7 +150,7 @@ const MODELS: ModelEntry[] = [
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["CoT"],
-    refs: { us: 187, nigeria: 0, ghana: 0 },
+    refs: { us: 237, nigeria: 240, ghana: 0 },
     pending: true,
   },
   {
@@ -330,12 +335,51 @@ function InfoPanel({
 
 // ── Page ─────────────────────────────────────────────────────────────
 
+type SortKey = "rank" | "params" | "us"
+
+function parseParamsToNumber(params: string): number {
+  const s = params.toLowerCase().trim()
+  if (s === "?" || s === "unk") return 0
+  if (s.endsWith("t")) return parseFloat(s) * 1000
+  if (s.endsWith("b")) return parseFloat(s)
+  return 0
+}
+
 export default function LeaderboardPage() {
   const [showQualityInfo, setShowQualityInfo] = useState(false)
   const [showMethodology, setShowMethodology] = useState(false)
+  const [showCountries, setShowCountries] = useState(false)
+  const [sortKey, setSortKey] = useState<SortKey>("rank")
+  const [sortAsc, setSortAsc] = useState(false)
 
-  const verified = MODELS.filter((m) => !m.pending)
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      if (key === "rank") setSortKey("rank")
+      else setSortAsc(!sortAsc)
+    } else {
+      setSortKey(key)
+      setSortAsc(key === "params") // params ascending by default, US descending
+    }
+  }
+
+  const verifiedUnsorted = MODELS.filter((m) => !m.pending)
   const pending = MODELS.filter((m) => m.pending)
+
+  const verified = [...verifiedUnsorted].sort((a, b) => {
+    if (sortKey === "rank") return 0 // keep original order (by US score desc)
+    if (sortKey === "params") {
+      const ap = parseParamsToNumber(a.params)
+      const bp = parseParamsToNumber(b.params)
+      return sortAsc ? ap - bp : bp - ap
+    }
+    if (sortKey === "us") {
+      const as_ = a.scores.us ?? -1
+      const bs = b.scores.us ?? -1
+      return sortAsc ? as_ - bs : bs - as_
+    }
+    return 0
+  })
+
   const allModels = [...verified, ...pending]
   const totalRefs = MODELS.reduce(
     (sum, m) => sum + m.refs.us + m.refs.nigeria + m.refs.ghana,
@@ -353,21 +397,23 @@ export default function LeaderboardPage() {
       />
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02)_0%,_transparent_70%)]" />
 
-      <main className="relative z-10 mx-auto w-full max-w-5xl px-6 py-12 lg:py-16">
-        {/* Back link */}
-        <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
+      {/* Top nav */}
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10 flex items-center justify-center px-6 pt-4"
+      >
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/5 px-3.5 py-1.5 text-xs font-medium text-emerald-400/80 transition-all hover:bg-emerald-400/10 hover:text-emerald-300"
         >
-          <Link
-            href="/"
-            className="mb-8 inline-flex items-center gap-1.5 text-xs text-muted-foreground/60 transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3 w-3" />
-            Back to calculator
-          </Link>
-        </motion.div>
+          <Search className="h-3 w-3" />
+          Hallucination Rate Calculator
+        </Link>
+      </motion.nav>
+
+      <main className="relative z-10 mx-auto w-full max-w-5xl px-6 py-12 lg:py-16">
 
         {/* Header */}
         <motion.div
@@ -393,7 +439,7 @@ export default function LeaderboardPage() {
           {/* Info buttons */}
           <div className="mt-3 flex items-center gap-4">
             <button
-              onClick={() => { setShowQualityInfo(!showQualityInfo); setShowMethodology(false) }}
+              onClick={() => { setShowQualityInfo(!showQualityInfo); setShowMethodology(false); setShowCountries(false) }}
               className={`inline-flex cursor-pointer items-center gap-1 text-xs transition-colors ${
                 showQualityInfo ? "text-blue-300" : "text-blue-400/60 hover:text-blue-300"
               }`}
@@ -402,13 +448,22 @@ export default function LeaderboardPage() {
               <span className="underline underline-offset-2">What is the quality score?</span>
             </button>
             <button
-              onClick={() => { setShowMethodology(!showMethodology); setShowQualityInfo(false) }}
+              onClick={() => { setShowMethodology(!showMethodology); setShowQualityInfo(false); setShowCountries(false) }}
               className={`inline-flex cursor-pointer items-center gap-1 text-xs transition-colors ${
                 showMethodology ? "text-emerald-300" : "text-emerald-400/60 hover:text-emerald-300"
               }`}
             >
               <FlaskConical className="h-3 w-3" />
               <span className="underline underline-offset-2">Methodology</span>
+            </button>
+            <button
+              onClick={() => { setShowCountries(!showCountries); setShowQualityInfo(false); setShowMethodology(false) }}
+              className={`inline-flex cursor-pointer items-center gap-1 text-xs transition-colors ${
+                showCountries ? "text-amber-300" : "text-amber-400/60 hover:text-amber-300"
+              }`}
+            >
+              <MapPin className="h-3 w-3" />
+              <span className="underline underline-offset-2">Why these countries?</span>
             </button>
           </div>
         </motion.div>
@@ -493,6 +548,59 @@ export default function LeaderboardPage() {
           </p>
         </InfoPanel>
 
+        {/* Countries Info Panel */}
+        <InfoPanel
+          open={showCountries}
+          onClose={() => setShowCountries(false)}
+          title="Why United States, Nigeria, and Ghana?"
+        >
+          <p>
+            These three countries represent vastly different levels of scholarly representation
+            in global databases. Using{" "}
+            <a href="https://openalex.org" target="_blank" rel="noopener noreferrer" className="text-amber-400 underline underline-offset-2 hover:text-amber-300">
+              OpenAlex
+            </a>{" "}
+            (the largest open index of scholarly works), we can quantify the gap:
+          </p>
+          <div className="grid grid-cols-3 gap-3 text-xs mt-2">
+            <div className="rounded-lg bg-white/5 p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-400" />
+                <span className="font-semibold text-foreground">United States</span>
+              </div>
+              <div className="font-mono text-lg text-blue-400">~80M</div>
+              <div className="text-muted-foreground/50">works in OpenAlex</div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-400" />
+                <span className="font-semibold text-foreground">Nigeria</span>
+              </div>
+              <div className="font-mono text-lg text-green-400">~700K</div>
+              <div className="text-muted-foreground/50">works in OpenAlex</div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-yellow-400" />
+                <span className="font-semibold text-foreground">Ghana</span>
+              </div>
+              <div className="font-mono text-lg text-yellow-400">~100K</div>
+              <div className="text-muted-foreground/50">works in OpenAlex</div>
+            </div>
+          </div>
+          <p className="mt-2">
+            This <strong>100&times; difference</strong> in scholarly output between the US and Nigeria
+            directly affects how much training data LLMs have seen about each country. Since LLMs learn from text
+            corpora that reflect these same imbalances, models that perform well on US topics may fail
+            completely on Nigerian or Ghanaian ones &mdash; not because the task is harder, but because
+            the training data is sparse.
+          </p>
+          <p className="text-xs text-muted-foreground/50 mt-1">
+            This is the core insight of our study: hallucination rates are predictable from the intersection
+            of model capacity and training data representation.
+          </p>
+        </InfoPanel>
+
         {/* Legend */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -538,12 +646,28 @@ export default function LeaderboardPage() {
               <tr className="border-b border-border text-[11px] uppercase tracking-wider text-muted-foreground/50">
                 <th className="py-3 pl-4 pr-2 text-left font-semibold w-8">#</th>
                 <th className="px-3 py-3 text-left font-semibold">Model</th>
-                <th className="px-3 py-3 text-left font-semibold">Params</th>
+                <th className="px-3 py-3 text-left font-semibold">
+                  <button
+                    onClick={() => handleSort("params")}
+                    className={`inline-flex cursor-pointer items-center gap-1 transition-colors ${
+                      sortKey === "params" ? "text-foreground/70" : "hover:text-foreground/50"
+                    }`}
+                  >
+                    Params
+                    <ArrowUpDown className="h-2.5 w-2.5" />
+                  </button>
+                </th>
                 <th className="px-3 py-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1">
+                  <button
+                    onClick={() => handleSort("us")}
+                    className={`inline-flex cursor-pointer items-center gap-1 transition-colors ${
+                      sortKey === "us" ? "text-foreground/70" : "hover:text-foreground/50"
+                    }`}
+                  >
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-400" />
                     United States
-                  </span>
+                    <ArrowUpDown className="h-2.5 w-2.5" />
+                  </button>
                 </th>
                 <th className="px-3 py-3 text-right font-semibold">
                   <span className="inline-flex items-center gap-1">
@@ -621,9 +745,16 @@ export default function LeaderboardPage() {
 
                   {/* Params */}
                   <td className="px-3 py-3">
-                    <span className="font-mono text-xs text-muted-foreground whitespace-nowrap">
-                      {model.params}
-                    </span>
+                    {model.activeParams ? (
+                      <div className="flex flex-col">
+                        <span className="font-mono text-xs text-muted-foreground">{model.params}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground/50">{model.activeParams} active</span>
+                      </div>
+                    ) : (
+                      <span className="font-mono text-xs text-muted-foreground whitespace-nowrap">
+                        {model.params}
+                      </span>
+                    )}
                   </td>
 
                   {/* US */}
@@ -702,9 +833,16 @@ export default function LeaderboardPage() {
 
                   {/* Params */}
                   <td className="px-3 py-3">
-                    <span className="font-mono text-xs text-muted-foreground/30 whitespace-nowrap">
-                      {model.params}
-                    </span>
+                    {model.activeParams ? (
+                      <div className="flex flex-col">
+                        <span className="font-mono text-xs text-muted-foreground/30">{model.params}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground/20">{model.activeParams} active</span>
+                      </div>
+                    ) : (
+                      <span className="font-mono text-xs text-muted-foreground/30 whitespace-nowrap">
+                        {model.params}
+                      </span>
+                    )}
                   </td>
 
                   {/* US */}
