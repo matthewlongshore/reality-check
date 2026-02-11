@@ -202,6 +202,22 @@ export default function Home() {
       {/* Subtle radial glow */}
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.02)_0%,_transparent_70%)]" />
 
+      {/* Top nav */}
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative z-10 flex items-center justify-end px-6 pt-4"
+      >
+        <Link
+          href="/leaderboard"
+          className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/5 px-3.5 py-1.5 text-xs font-medium text-amber-400/80 transition-all hover:bg-amber-400/10 hover:text-amber-300"
+        >
+          <Trophy className="h-3 w-3" />
+          ScholarReferenceBench
+        </Link>
+      </motion.nav>
+
       <main className="relative z-10 mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-16 lg:py-24">
         {/* Header */}
         <motion.div
@@ -401,14 +417,6 @@ export default function Home() {
             verified citations &middot; R&sup2; = 0.302
           </p>
           <div className="flex items-center gap-4">
-            <Link
-              href="/leaderboard"
-              className="inline-flex items-center gap-1 text-xs text-amber-400/70 transition-colors hover:text-amber-300"
-            >
-              <Trophy className="h-3 w-3" />
-              ScholarReferenceBench
-            </Link>
-            <span className="text-muted-foreground/20">|</span>
             <a
               href="https://openalex.org"
               target="_blank"

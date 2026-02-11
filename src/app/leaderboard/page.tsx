@@ -336,6 +336,7 @@ export default function LeaderboardPage() {
 
   const verified = MODELS.filter((m) => !m.pending)
   const pending = MODELS.filter((m) => m.pending)
+  const allModels = [...verified, ...pending]
   const totalRefs = MODELS.reduce(
     (sum, m) => sum + m.refs.us + m.refs.nigeria + m.refs.ghana,
     0
@@ -640,6 +641,102 @@ export default function LeaderboardPage() {
                   </td>
                 </motion.tr>
               ))}
+
+              {/* Separator */}
+              {pending.length > 0 && (
+                <tr className="border-b border-border">
+                  <td colSpan={6} className="py-2 pl-4 text-[10px] uppercase tracking-widest text-muted-foreground/30 font-semibold">
+                    Coming soon
+                  </td>
+                </tr>
+              )}
+
+              {/* Pending models */}
+              {pending.map((model, i) => (
+                <motion.tr
+                  key={model.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.3 + (verified.length + i) * 0.06,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="border-b border-border/30 transition-colors hover:bg-white/[0.01]"
+                >
+                  {/* No rank */}
+                  <td className="py-3 pl-4 pr-2 text-center">
+                    <span className="font-mono text-sm text-muted-foreground/20">&mdash;</span>
+                  </td>
+
+                  {/* Model name + tags + date */}
+                  <td className="px-3 py-3">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-foreground/40 whitespace-nowrap">
+                          {model.name}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/25">
+                          {model.provider}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/20 font-mono">
+                          {model.date}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 opacity-50">
+                        {model.tags
+                          .filter((t) => t !== "dense")
+                          .map((t) => (
+                            <Tag key={t} tag={t} />
+                          ))}
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Params */}
+                  <td className="px-3 py-3">
+                    <span className="font-mono text-xs text-muted-foreground/30 whitespace-nowrap">
+                      {model.params}
+                    </span>
+                  </td>
+
+                  {/* US */}
+                  <td className="px-3 py-3">
+                    <div className="flex justify-end">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-16 rounded-full bg-white/[0.03] sm:w-20" />
+                        <span className="w-10 text-right font-mono text-[10px] text-muted-foreground/20 italic">
+                          {model.refs.us > 0 ? `${model.refs.us}` : "\u2014"}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Nigeria */}
+                  <td className="px-3 py-3">
+                    <div className="flex justify-end">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-16 rounded-full bg-white/[0.03] sm:w-20" />
+                        <span className="w-10 text-right font-mono text-[10px] text-muted-foreground/20 italic">
+                          {model.refs.nigeria > 0 ? `${model.refs.nigeria}` : "\u2014"}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Ghana */}
+                  <td className="px-3 py-3 pr-4">
+                    <div className="flex justify-end">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-16 rounded-full bg-white/[0.03] sm:w-20" />
+                        <span className="w-10 text-right font-mono text-[10px] text-muted-foreground/20 italic">
+                          {model.refs.ghana > 0 ? `${model.refs.ghana}` : "\u2014"}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                </motion.tr>
+              ))}
             </tbody>
           </table>
         </motion.div>
@@ -674,48 +771,6 @@ export default function LeaderboardPage() {
           </div>
         </motion.div>
 
-        {/* ── Pending ─────────────────────────────────────────────── */}
-        {pending.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.0 }}
-            className="mt-8"
-          >
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/40">
-              Awaiting Verification
-            </h3>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {pending.map((model) => (
-                <div
-                  key={model.name}
-                  className="flex items-center gap-3 rounded-lg border border-border/30 bg-card/30 px-4 py-3"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-foreground/50 truncate">
-                        {model.name}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground/30 font-mono">
-                        {model.params}
-                      </span>
-                    </div>
-                    <div className="mt-1 flex gap-1">
-                      {model.tags
-                        .filter((t) => t !== "dense")
-                        .map((t) => (
-                          <Tag key={t} tag={t} />
-                        ))}
-                    </div>
-                  </div>
-                  <span className="text-[10px] text-muted-foreground/30 font-mono whitespace-nowrap">
-                    {model.refs.us + model.refs.nigeria + model.refs.ghana} refs
-                  </span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
       </main>
 
       {/* Footer */}
