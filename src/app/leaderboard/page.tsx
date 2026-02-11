@@ -76,7 +76,7 @@ const MODELS: ModelEntry[] = [
     params: "104B",
     provider: "Cohere",
     scores: { us: 0.144, nigeria: null, ghana: null },
-    tags: ["dense", "RAG"],
+    tags: ["dense"],
     refs: { us: 240, nigeria: 0, ghana: 0 },
   },
   {
@@ -334,7 +334,7 @@ export default function LeaderboardPage() {
           </div>
           <span className="text-muted-foreground/20">|</span>
           <div className="flex items-center gap-2">
-            {["CoT", "MoE", "search", "RAG"].map((t) => (
+            {["CoT", "MoE", "search"].map((t) => (
               <Tag key={t} tag={t} />
             ))}
           </div>
@@ -484,7 +484,7 @@ export default function LeaderboardPage() {
             </p>
             <p>
               <span className="text-amber-400 font-medium">Training purpose:</span>{" "}
-              Cohere R+ (104B, RAG-optimized) scores 0.14 &mdash; below Llama 8B
+              Cohere R+ (104B, conversational focus) scores 0.14 &mdash; below Llama 8B
             </p>
             <p>
               <span className="text-red-400 font-medium">Geography effect:</span>{" "}
