@@ -295,7 +295,7 @@ export default function LeaderboardPage() {
           <div className="flex items-center gap-3 mb-3">
             <Trophy className="h-6 w-6 text-amber-400" />
             <h1 className="text-3xl font-bold tracking-tight text-foreground lg:text-4xl">
-              ScholarBench
+              ScholarReferenceBench
             </h1>
           </div>
           <p className="text-muted-foreground max-w-2xl">

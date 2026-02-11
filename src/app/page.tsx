@@ -222,7 +222,7 @@ export default function Home() {
               className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/5 px-4 py-1.5 text-xs font-medium text-amber-400/80 transition-all hover:bg-amber-400/10 hover:text-amber-300"
             >
               <Trophy className="h-3 w-3" />
-              ScholarBench Leaderboard
+              ScholarReferenceBench
             </Link>
           </div>
           <div className="mt-2 flex items-center justify-center gap-4">
