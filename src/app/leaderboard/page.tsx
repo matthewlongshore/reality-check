@@ -163,6 +163,16 @@ const MODELS: ModelEntry[] = [
     refs: { us: 240, nigeria: 231, ghana: 222 },
     pending: true,
   },
+  {
+    name: "Grok 3 Mini",
+    params: "?",
+    provider: "xAI",
+    date: "Feb 2025",
+    scores: { us: null, nigeria: null, ghana: null },
+    tags: ["CoT"],
+    refs: { us: 240, nigeria: 240, ghana: 0 },
+    pending: true,
+  },
 ]
 
 const TOPICS = [
