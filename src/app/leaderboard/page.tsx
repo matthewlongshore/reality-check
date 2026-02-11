@@ -1,7 +1,8 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { ArrowLeft, Trophy, Brain, Layers, Search, Globe } from "lucide-react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ArrowLeft, Trophy, Brain, Layers, Search, Globe, Info, X, FlaskConical } from "lucide-react"
 import Link from "next/link"
 
 // ── Model data (from verified experiments) ──────────────────────────
@@ -16,6 +17,7 @@ interface ModelEntry {
   name: string
   params: string
   provider: string
+  date: string
   scores: ModelScore
   tags: string[]
   refs: { us: number; nigeria: number; ghana: number }
@@ -27,6 +29,7 @@ const MODELS: ModelEntry[] = [
     name: "GPT-5",
     params: "?",
     provider: "OpenAI",
+    date: "Jan 2025",
     scores: { us: 0.786, nigeria: 0.694, ghana: 0.597 },
     tags: ["CoT"],
     refs: { us: 240, nigeria: 240, ghana: 239 },
@@ -35,6 +38,7 @@ const MODELS: ModelEntry[] = [
     name: "Mistral Large 2",
     params: "123B",
     provider: "Mistral",
+    date: "Feb 2025",
     scores: { us: 0.774, nigeria: 0.362, ghana: null },
     tags: ["dense"],
     refs: { us: 240, nigeria: 240, ghana: 0 },
@@ -43,6 +47,7 @@ const MODELS: ModelEntry[] = [
     name: "Llama 3.1 405B",
     params: "405B",
     provider: "Meta",
+    date: "Feb 2025",
     scores: { us: 0.613, nigeria: 0.211, ghana: null },
     tags: ["dense", "open"],
     refs: { us: 244, nigeria: 237, ghana: 0 },
@@ -51,6 +56,7 @@ const MODELS: ModelEntry[] = [
     name: "GPT-5 Nano",
     params: "?",
     provider: "OpenAI",
+    date: "Jan 2025",
     scores: { us: 0.415, nigeria: 0.219, ghana: 0.182 },
     tags: ["CoT"],
     refs: { us: 237, nigeria: 233, ghana: 238 },
@@ -59,6 +65,7 @@ const MODELS: ModelEntry[] = [
     name: "Llama 3.3 70B",
     params: "70B",
     provider: "Meta",
+    date: "Feb 2025",
     scores: { us: 0.368, nigeria: 0.022, ghana: null },
     tags: ["dense", "open"],
     refs: { us: 239, nigeria: 45, ghana: 0 },
@@ -67,6 +74,7 @@ const MODELS: ModelEntry[] = [
     name: "Llama 3.1 8B",
     params: "8B",
     provider: "Meta",
+    date: "Feb 2025",
     scores: { us: 0.194, nigeria: 0.000, ghana: null },
     tags: ["dense", "open"],
     refs: { us: 239, nigeria: 2, ghana: 0 },
@@ -75,6 +83,7 @@ const MODELS: ModelEntry[] = [
     name: "Cohere Command R+",
     params: "104B",
     provider: "Cohere",
+    date: "Feb 2025",
     scores: { us: 0.144, nigeria: null, ghana: null },
     tags: ["dense"],
     refs: { us: 240, nigeria: 0, ghana: 0 },
@@ -83,6 +92,7 @@ const MODELS: ModelEntry[] = [
     name: "GPT-OSS 120B",
     params: "5.1B active",
     provider: "Groq",
+    date: "Feb 2025",
     scores: { us: 0.083, nigeria: null, ghana: null },
     tags: ["MoE"],
     refs: { us: 40, nigeria: 0, ghana: 0 },
@@ -92,6 +102,7 @@ const MODELS: ModelEntry[] = [
     name: "DeepSeek R1",
     params: "37B active",
     provider: "DeepSeek",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["MoE", "CoT"],
     refs: { us: 239, nigeria: 234, ghana: 0 },
@@ -101,6 +112,7 @@ const MODELS: ModelEntry[] = [
     name: "ERNIE 4.5",
     params: "47B active",
     provider: "Baidu",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["MoE"],
     refs: { us: 239, nigeria: 240, ghana: 0 },
@@ -110,6 +122,7 @@ const MODELS: ModelEntry[] = [
     name: "Kimi K2",
     params: "32B active",
     provider: "Moonshot",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["MoE"],
     refs: { us: 229, nigeria: 239, ghana: 0 },
@@ -119,6 +132,7 @@ const MODELS: ModelEntry[] = [
     name: "Perplexity Sonar",
     params: "70B",
     provider: "Perplexity",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["search"],
     refs: { us: 218, nigeria: 234, ghana: 0 },
@@ -128,6 +142,7 @@ const MODELS: ModelEntry[] = [
     name: "Gemini 3 Pro",
     params: "?",
     provider: "Google",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["CoT"],
     refs: { us: 187, nigeria: 0, ghana: 0 },
@@ -137,6 +152,7 @@ const MODELS: ModelEntry[] = [
     name: "Qwen 3 32B",
     params: "32B",
     provider: "Alibaba",
+    date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
     tags: ["dense"],
     refs: { us: 240, nigeria: 231, ghana: 222 },
@@ -144,13 +160,40 @@ const MODELS: ModelEntry[] = [
   },
 ]
 
+const TOPICS = [
+  "Biometric voter registration",
+  "Climate change",
+  "Climate change adaptation in agriculture",
+  "Climate-smart agriculture for smallholder farmers",
+  "Democratic elections",
+  "Digital financial services",
+  "Economics",
+  "Education",
+  "Energy",
+  "Environmental Science",
+  "Girls education",
+  "Health",
+  "Infectious disease",
+  "Insecticide-treated bed nets for malaria",
+  "Malaria prevention",
+  "Microfinance loan repayment",
+  "Mini-grid electrification",
+  "Mobile banking",
+  "Political Science",
+  "Renewable energy",
+  "Rural electrification",
+  "School dropout",
+  "School dropout prevention programs in rural areas",
+  "Voter turnout",
+]
+
 // ── Helpers ──────────────────────────────────────────────────────────
 
 function qualityColor(q: number): string {
-  if (q >= 0.70) return "#34d399" // emerald-400
-  if (q >= 0.50) return "#a3e635" // lime-400
-  if (q >= 0.30) return "#fbbf24" // amber-400
-  return "#f87171" // red-400
+  if (q >= 0.70) return "#34d399"
+  if (q >= 0.50) return "#a3e635"
+  if (q >= 0.30) return "#fbbf24"
+  return "#f87171"
 }
 
 function qualityBg(q: number): string {
@@ -178,12 +221,6 @@ const TAG_CONFIG: Record<string, { icon: typeof Brain; label: string; color: str
     label: "Search",
     color: "text-blue-400 border-blue-400/30 bg-blue-400/10",
     title: "Search-augmented model with web retrieval",
-  },
-  RAG: {
-    icon: Globe,
-    label: "RAG",
-    color: "text-amber-400 border-amber-400/30 bg-amber-400/10",
-    title: "Optimized for Retrieval-Augmented Generation, not factual recall",
   },
   open: {
     icon: Globe,
@@ -248,9 +285,55 @@ function QualityBar({ score, country }: { score: number | null; country: string 
   )
 }
 
+// ── Info Panel Component ─────────────────────────────────────────────
+
+function InfoPanel({
+  open,
+  onClose,
+  title,
+  children,
+}: {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="overflow-hidden"
+        >
+          <div className="mb-6 rounded-xl border border-border/50 bg-card/80 p-5">
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+              <button
+                onClick={onClose}
+                className="cursor-pointer text-muted-foreground/40 hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
+              {children}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 // ── Page ─────────────────────────────────────────────────────────────
 
 export default function LeaderboardPage() {
+  const [showQualityInfo, setShowQualityInfo] = useState(false)
+  const [showMethodology, setShowMethodology] = useState(false)
+
   const verified = MODELS.filter((m) => !m.pending)
   const pending = MODELS.filter((m) => m.pending)
   const totalRefs = MODELS.reduce(
@@ -290,7 +373,7 @@ export default function LeaderboardPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-10"
+          className="mb-8"
         >
           <div className="flex items-center gap-3 mb-3">
             <Trophy className="h-6 w-6 text-amber-400" />
@@ -300,12 +383,107 @@ export default function LeaderboardPage() {
           </div>
           <p className="text-muted-foreground max-w-2xl">
             How well can LLMs recall real scholarly references? Each model was asked to cite 10 papers
-            for 24 research topics. Every reference was verified against scholarly databases.
+            for 24 research topics across 3 countries. Every reference was verified against scholarly databases.
           </p>
-          <p className="mt-2 text-xs text-muted-foreground/50">
-            Quality Score: verified = 1.0 &middot; verified-with-error = 0.67 &middot; needs-human = 0.33 &middot; unverified = 0.0
-          </p>
+
+          {/* Info buttons */}
+          <div className="mt-3 flex items-center gap-4">
+            <button
+              onClick={() => { setShowQualityInfo(!showQualityInfo); setShowMethodology(false) }}
+              className={`inline-flex cursor-pointer items-center gap-1 text-xs transition-colors ${
+                showQualityInfo ? "text-blue-300" : "text-blue-400/60 hover:text-blue-300"
+              }`}
+            >
+              <Info className="h-3 w-3" />
+              <span className="underline underline-offset-2">What is the quality score?</span>
+            </button>
+            <button
+              onClick={() => { setShowMethodology(!showMethodology); setShowQualityInfo(false) }}
+              className={`inline-flex cursor-pointer items-center gap-1 text-xs transition-colors ${
+                showMethodology ? "text-emerald-300" : "text-emerald-400/60 hover:text-emerald-300"
+              }`}
+            >
+              <FlaskConical className="h-3 w-3" />
+              <span className="underline underline-offset-2">Methodology</span>
+            </button>
+          </div>
         </motion.div>
+
+        {/* Quality Score Info Panel */}
+        <InfoPanel
+          open={showQualityInfo}
+          onClose={() => setShowQualityInfo(false)}
+          title="Quality Score"
+        >
+          <p>
+            Every reference generated by an LLM is checked against scholarly databases using{" "}
+            <a href="https://sourceverify.ai" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline underline-offset-2 hover:text-blue-300">
+              SVRIS
+            </a>{" "}
+            (Scholarly Verification and Identification Reference Service), which verifies the title, authors, year,
+            venue, and identifiers (DOI, URL) of each citation.
+          </p>
+          <p>Each reference receives one of four outcomes, weighted to produce a quality score:</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs mt-1">
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+              <span><span className="font-semibold text-foreground">Verified</span> = 1.0</span>
+            </div>
+            <div className="text-muted-foreground/60">Paper exists, all metadata correct</div>
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-zinc-500" />
+              <span><span className="font-semibold text-foreground">Verified w/ error</span> = 0.67</span>
+            </div>
+            <div className="text-muted-foreground/60">Paper is real but has metadata issues (wrong year, incomplete authors)</div>
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-amber-500" />
+              <span><span className="font-semibold text-foreground">Needs human review</span> = 0.33</span>
+            </div>
+            <div className="text-muted-foreground/60">Could not be confirmed or denied automatically</div>
+            <div className="flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-rose-500" />
+              <span><span className="font-semibold text-foreground">Unverified</span> = 0.0</span>
+            </div>
+            <div className="text-muted-foreground/60">Likely fabricated &mdash; no matching publication found</div>
+          </div>
+          <p className="text-xs text-muted-foreground/50 mt-2">
+            A quality score of 1.0 means every reference is a real, correctly-cited paper.
+            A score of 0.0 means every reference is fabricated.
+          </p>
+        </InfoPanel>
+
+        {/* Methodology Info Panel */}
+        <InfoPanel
+          open={showMethodology}
+          onClose={() => setShowMethodology(false)}
+          title="Methodology"
+        >
+          <p>
+            Each model receives the same prompt: <em>&ldquo;List 10 relevant scholarly references (journal papers,
+            conference papers, technical reports, or dissertations) about [topic] in [country].&rdquo;</em> with
+            instructions to provide only the list, no commentary.
+          </p>
+          <p>
+            We test <strong>24 research topics</strong> spanning 6 thematic groups &mdash; ranging from broad fields
+            (Economics, Health) to highly specific interventions (Insecticide-treated bed nets for malaria,
+            School dropout prevention programs in rural areas). Topics are tested across <strong>3 countries</strong>:
+            United States, Nigeria, and Ghana.
+          </p>
+          <div className="mt-2">
+            <p className="text-xs font-medium text-foreground mb-1.5">The 24 topics:</p>
+            <div className="flex flex-wrap gap-1.5">
+              {TOPICS.map((t) => (
+                <span key={t} className="rounded-md bg-white/5 px-2 py-0.5 text-[10px] text-muted-foreground/70">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+          <p className="mt-2">
+            This yields <strong>24 topics &times; 10 references = 240 references</strong> per model per country.
+            Every single reference is then verified using SVRIS against OpenAlex, CrossRef, and other scholarly databases.
+          </p>
+        </InfoPanel>
 
         {/* Legend */}
         <motion.div
@@ -409,7 +587,7 @@ export default function LeaderboardPage() {
                     </span>
                   </td>
 
-                  {/* Model name + tags */}
+                  {/* Model name + tags + date */}
                   <td className="px-3 py-3">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
@@ -418,6 +596,9 @@ export default function LeaderboardPage() {
                         </span>
                         <span className="text-[10px] text-muted-foreground/40">
                           {model.provider}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/25 font-mono">
+                          {model.date}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1">
