@@ -54,7 +54,7 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "GPT-5 Nano",
-    params: "?",
+    params: "UNK",
     provider: "OpenAI",
     date: "Jan 2025",
     scores: { us: 0.415, nigeria: 0.219, ghana: 0.182 },
@@ -90,7 +90,7 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "GPT-OSS 120B",
-    params: "5.1B active",
+    params: "120B / 5.1B active",
     provider: "Groq",
     date: "Feb 2025",
     scores: { us: 0.083, nigeria: null, ghana: null },
@@ -100,7 +100,7 @@ const MODELS: ModelEntry[] = [
   // Pending verification
   {
     name: "DeepSeek R1",
-    params: "37B active",
+    params: "671B / 37B active",
     provider: "DeepSeek",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -110,7 +110,7 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "ERNIE 4.5",
-    params: "47B active",
+    params: "300B / 47B active",
     provider: "Baidu",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -120,7 +120,7 @@ const MODELS: ModelEntry[] = [
   },
   {
     name: "Kimi K2",
-    params: "32B active",
+    params: "1T / 32B active",
     provider: "Moonshot",
     date: "Feb 2025",
     scores: { us: null, nigeria: null, ghana: null },
@@ -384,7 +384,10 @@ export default function LeaderboardPage() {
           </div>
           <p className="text-muted-foreground max-w-2xl">
             How well can LLMs recall real scholarly references? Each model was asked to cite 10 papers
-            for 24 research topics across 3 countries. Every reference was verified against scholarly databases.
+            for 24 research topics across 3 countries. Every reference was then verified for authenticity by{" "}
+            <a href="https://sourceverify.ai" target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300">
+              SourceVerify.ai
+            </a>.
           </p>
 
           {/* Info buttons */}
@@ -421,7 +424,7 @@ export default function LeaderboardPage() {
             <a href="https://sourceverify.ai" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline underline-offset-2 hover:text-blue-300">
               SVRIS
             </a>{" "}
-            (Scholarly Verification and Identification Reference Service), which verifies the title, authors, year,
+            (SourceVerify Reference Identity Standard), which verifies the title, authors, year,
             venue, and identifiers (DOI, URL) of each citation.
           </p>
           <p>Each reference receives one of four outcomes, weighted to produce a quality score:</p>
@@ -482,7 +485,11 @@ export default function LeaderboardPage() {
           </div>
           <p className="mt-2">
             This yields <strong>24 topics &times; 10 references = 240 references</strong> per model per country.
-            Every single reference is then verified using SVRIS against OpenAlex, CrossRef, and other scholarly databases.
+            Every single reference is then verified by{" "}
+            <a href="https://sourceverify.ai" target="_blank" rel="noopener noreferrer" className="text-emerald-400 underline underline-offset-2 hover:text-emerald-300">
+              SourceVerify.ai
+            </a>{" "}
+            and given a quality score.
           </p>
         </InfoPanel>
 
