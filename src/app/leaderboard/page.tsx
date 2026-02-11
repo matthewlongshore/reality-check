@@ -31,7 +31,7 @@ const MODELS: ModelEntry[] = [
     params: "?",
     provider: "OpenAI",
     date: "Jan 2025",
-    scores: { us: 0.786, nigeria: 0.694, ghana: 0.597 },
+    scores: { us: 0.803, nigeria: 0.694, ghana: 0.597 },
     tags: ["CoT"],
     refs: { us: 240, nigeria: 240, ghana: 239 },
   },
