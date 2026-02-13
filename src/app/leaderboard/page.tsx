@@ -52,10 +52,9 @@ const MODELS: ModelEntry[] = [
     params: "405B",
     provider: "Meta",
     date: "Feb 2025",
-    scores: { us: 0.597, nigeria: null, ghana: null },
+    scores: { us: 0.597, nigeria: 0.209, ghana: null },
     tags: ["dense", "open"],
-    refs: { us: 239, nigeria: 237, ghana: 0 },
-    pending: true,
+    refs: { us: 240, nigeria: 237, ghana: 0 },
   },
   {
     name: "Llama 3.3 70B",
