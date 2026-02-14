@@ -61,9 +61,9 @@ const MODELS: ModelEntry[] = [
     params: "70B",
     provider: "Meta",
     date: "Feb 2025",
-    scores: { us: null, nigeria: null, ghana: null },
+    scores: { us: 0.338, nigeria: null, ghana: null },
     tags: ["dense", "open"],
-    refs: { us: 240, nigeria: 240, ghana: 0 },
+    refs: { us: 237, nigeria: 240, ghana: 240 },
     pending: true,
   },
   {
@@ -71,9 +71,9 @@ const MODELS: ModelEntry[] = [
     params: "8B",
     provider: "Meta",
     date: "Feb 2025",
-    scores: { us: null, nigeria: null, ghana: null },
+    scores: { us: 0.210, nigeria: null, ghana: null },
     tags: ["dense", "open"],
-    refs: { us: 240, nigeria: 240, ghana: 0 },
+    refs: { us: 238, nigeria: 240, ghana: 240 },
     pending: true,
   },
   {
