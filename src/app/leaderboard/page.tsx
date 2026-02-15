@@ -52,9 +52,9 @@ const MODELS: ModelEntry[] = [
     params: "405B",
     provider: "Meta",
     date: "Feb 2025",
-    scores: { us: 0.597, nigeria: 0.209, ghana: null },
+    scores: { us: 0.790, nigeria: 0.336, ghana: null },
     tags: ["dense", "open"],
-    refs: { us: 240, nigeria: 237, ghana: 0 },
+    refs: { us: 240, nigeria: 240, ghana: 0 },
   },
   {
     name: "Llama 3.3 70B",
@@ -976,7 +976,7 @@ export default function LeaderboardPage() {
           <div className="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
             <p>
               <span className="text-emerald-400 font-medium">Scaling works:</span>{" "}
-              Llama 8B &rarr; 70B &rarr; 405B quality rises 0.19 &rarr; 0.37 &rarr; 0.61
+              Llama 8B &rarr; 70B &rarr; 405B quality rises 0.19 &rarr; 0.37 &rarr; 0.79
             </p>
             <p>
               <span className="text-violet-400 font-medium">Active params matter:</span>{" "}
